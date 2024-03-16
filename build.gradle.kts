@@ -4,7 +4,8 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
 
 plugins {
-    kotlin("multiplatform") version "1.9.23"
+    alias(libs.plugins.multiplatform)
+    alias(libs.plugins.serialization)
 }
 
 group = "at.posselt"
@@ -21,12 +22,22 @@ kotlin {
                 mainOutputFileName = "kjs.js"
                 output.libraryTarget = "commonjs2"
             }
+            testTask {
+                useKarma {
+                    useFirefox()
+                }
+            }
         }
         binaries.executable()
     }
     sourceSets {
+        commonMain.dependencies {
+            implementation(libs.coroutines)
+            implementation(libs.datetime)
+            implementation(libs.serialization)
+        }
         commonTest.dependencies {
-            implementation(kotlin("test"))
+            implementation(libs.test)
         }
     }
 }
